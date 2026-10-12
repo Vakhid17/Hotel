@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StayFinder — Отели в Санкт-Петербурге</title>
+
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-hover: #1D4ED8;
+            --secondary: #0F172A;
+            --background: #F8FAFC;
+            --surface: #FFFFFF;
+            --text: #1E293B;
+            --muted: #64748B;
+            --border: #E2E8F0;
+            --accent: #F59E0B;
+            --success: #16A34A;
+            --light-blue: #EFF6FF;
+            --danger: #DC2626;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+
+            --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.10);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button,
+        a {
+            transition:
+                background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: var(--secondary);
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 3px 15px rgba(15, 23, 42, 0.18);
+        }
+
+        .header-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #60A5FA;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-left: auto;
+        }
+
+        .nav a {
+            color: #CBD5E1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav a:hover {
+            color: #fff;
+        }
+
+        .login-button {
+            border: 1px solid rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+
+            padding: 9px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .login-button:hover {
+            background: #fff;
+            color: var(--secondary);
+        }
+
+        /* SEARCH */
+
+        .search-section {
+            background:
+                linear-gradient(
+                    135deg,
+                    #1E40AF 0%,
+                    #2563EB 55%,
+                    #3B82F6 100%
+                );
+
+            padding: 32px 24px 42px;
+        }
+
+        .search-wrapper {
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        .search-heading {
+            color: #fff;
+            margin-bottom: 18px;
+        }
+
+        .search-heading h1 {
+            font-size: 26px;
+            margin-bottom: 4px;
+        }
+
+        .search-heading p {
+            color: #DBEAFE;
+            font-size: 14px;
+        }
+
+        .search-box {
+            background: #fff;
+            padding: 10px;
+            border-radius: var(--radius-md);
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr 1fr auto;
+            gap: 8px;
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-field {
+            padding: 9px 13px;
+            border-right: 1px solid var(--border);
+        }
+
+        .search-field:last-of-type {
+            border-right: none;
+        }
+
+        .search-label {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .search-field input,
+        .search-field select {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .search-button {
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 10px;
+            padding: 0 24px;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 52px;
+        }
+
+        .search-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* MAIN */
+
+        .page {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+        }
+
+        .results-heading {
+            margin-bottom: 24px;
+        }
+
+        .results-heading h2 {
+            font-size: 28px;
+            letter-spacing: -0.7px;
+            margin-bottom: 5px;
+        }
+
+        .results-heading p {
+            color: var(--muted);
+        }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 270px minmax(0, 1fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        /* FILTERS */
+
+        .filters {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 96px;
+        }
+
+        .filter-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-header h3 {
+            font-size: 17px;
+        }
+
+        .reset-button {
+            border: none;
+            background: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .reset-button:hover {
+            text-decoration: underline;
+        }
+
+        .filter-group {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .filter-group:last-child {
+            border-bottom: none;
+        }
+
+        .filter-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 11px;
+            color: #475569;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .filter-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-option input {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .filter-option .count {
+            margin-left: auto;
+            color: #94A3B8;
+            font-size: 12px;
+        }
+
+        .price-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .price-inputs input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px;
+            outline: none;
+        }
+
+        .price-inputs input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+        .stars {
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+
+        /* RESULTS */
+
+        .results-area {
+            min-width: 0;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .toolbar-text {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .sort-block {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .sort-block label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .sort-block select {
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 9px;
+            padding: 9px 34px 9px 12px;
+            cursor: pointer;
+            outline: none;
+            color: var(--text);
+        }
+
+        .sort-block select:focus {
+            border-color: var(--primary);
+        }
+
+        /* HOTEL CARD */
+
+        .hotel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .hotel-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr) 190px;
+            min-height: 220px;
+            box-shadow: var(--shadow-sm);
+            transition:
+                transform 0.22s ease,
+                box-shadow 0.22s ease,
+                border-color 0.22s ease;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: #BFDBFE;
+        }
+
+        .hotel-image {
+            width: 100%;
+            height: 100%;
+            min-height: 220px;
+            object-fit: cover;
+        }
+
+        .hotel-info {
+            padding: 20px 22px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hotel-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 5px;
+        }
+
+        .hotel-title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+        }
+
+        .hotel-location {
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .hotel-description {
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 16px;
+            max-width: 590px;
+        }
+
+        .amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: auto;
+        }
+
+        .amenity {
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 12px;
+            background: #F1F5F9;
+            color: #475569;
+        }
+
+        .amenity.good {
+            background: #F0FDF4;
+            color: #15803D;
+        }
+
+        .hotel-booking {
+            border-left: 1px solid var(--border);
+            padding: 18px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-between;
+            text-align: right;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .rating-text strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .rating-text span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .rating-value {
+            width: 43px;
+            height: 43px;
+            border-radius: 10px 10px 10px 3px;
+            background: var(--secondary);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 800;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .price-block {
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .price-label {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--secondary);
+            margin: 2px 0;
+        }
+
+        .price-period {
+            color: var(--muted);
+            font-size: 11px;
+            margin-bottom: 11px;
+        }
+
+        .choose-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-width: 150px;
+
+            border: none;
+            border-radius: 9px;
+            padding: 10px 13px;
+
+            background: var(--primary);
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .choose-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25);
+        }
+
+        .limited {
+            color: var(--danger);
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        /* MOBILE FILTER BUTTON */
+
+        .mobile-filter-button {
+            display: none;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            background: var(--secondary);
+            color: #94A3B8;
+            padding: 36px 24px;
+        }
+
+        .footer-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+
+            font-size: 13px;
+        }
+
+        .footer .logo {
+            color: #fff;
+            font-size: 20px;
+        }
+
+        /* TABLET */
+
+        @media (max-width: 1024px) {
+            .search-box {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .search-button {
+                grid-column: 1 / -1;
+            }
+
+            .content-layout {
+                grid-template-columns: 220px minmax(0, 1fr);
+                gap: 18px;
+            }
+
+            .hotel-card {
+                grid-template-columns: 210px minmax(0, 1fr);
+            }
+
+            .hotel-booking {
+                grid-column: 2;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                flex-direction: row;
+                align-items: center;
+                text-align: left;
+            }
+
+            .price-block {
+                margin-top: 0;
+                padding-top: 0;
+                text-align: right;
+            }
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 760px) {
+
+            .header-inner {
+                height: 62px;
+                padding: 0 16px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .search-section {
+                padding: 24px 16px 30px;
+            }
+
+            .search-heading h1 {
+                font-size: 22px;
+            }
+
+            .search-box {
+                grid-template-columns: 1fr;
+                padding: 8px;
+            }
+
+            .search-field {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 10px;
+            }
+
+            .search-button {
+                grid-column: auto;
+            }
+
+            .page {
+                padding: 24px 16px 40px;
+            }
+
+            .results-heading h2 {
+                font-size: 23px;
+            }
+
+            .content-layout {
+                display: block;
+            }
+
+            .filters {
+                display: none;
+            }
+
+            .mobile-filter-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+
+                border: 1px solid var(--border);
+                background: #fff;
+                border-radius: 9px;
+
+                padding: 9px 13px;
+                font-weight: 600;
+                color: var(--text);
+                cursor: pointer;
+            }
+
+            .mobile-filter-button:hover {
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+
+            .toolbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .toolbar-top {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .sort-block {
+                justify-content: space-between;
+            }
+
+            .sort-block select {
+                flex: 1;
+            }
+
+            .hotel-card {
+                grid-template-columns: 1fr;
+            }
+
+            .hotel-image {
+                height: 210px;
+                min-height: auto;
+            }
+
+            .hotel-info {
+                padding: 17px;
+            }
+
+            .hotel-booking {
+                grid-column: auto;
+                padding: 16px 17px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+
+            .price-block {
+                text-align: right;
+            }
+
+            .choose-button {
+                grid-column: 1 / -1;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .login-button {
+                padding: 7px 11px;
+                font-size: 13px;
+            }
+
+            .hotel-title {
+                font-size: 18px;
+            }
+
+            .hotel-booking {
+                grid-template-columns: 1fr;
+            }
+
+            .price-block {
+                text-align: left;
+            }
+
+            .rating {
+                justify-content: space-between;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-inner">
+
+        <a href="#" class="logo">
+            Stay<span>Finder</span>
+        </a>
+
+        <nav class="nav">
+            <a href="#">Отели</a>
+            <a href="#">Избранное</a>
+            <a href="#">Мои бронирования</a>
+            <a href="#">Поддержка</a>
+        </nav>
+
+        <button class="login-button">
+            Войти
+        </button>
+
+    </div>
+</header>
+
+
+<section class="search-section">
+
+    <div class="search-wrapper">
+
+        <div class="search-heading">
+            <h1>Найдите идеальный отель</h1>
+            <p>Сравнивайте варианты и бронируйте по лучшей цене</p>
+        </div>
+
+        <form class="search-box">
+
+            <div class="search-field">
+                <label class="search-label">
+                    Направление
+                </label>
+
+                <input
+                    type="text"
+                    value="Санкт-Петербург"
+                    aria-label="Город или направление"
+                >
+            </div>
+
+
+            <div class="search-field">
+                <label class="search-label">
+                    Заезд
+                </label>
+
+                <input
+                    type="date"
+                    value="2026-10-16"
+                    aria-label="Дата заезда"
+                >
+            </div>
+
+
+            <div class="search-field">
+                <label class="search-label">
+                    Выезд
+                </label>
+
+                <input
+                    type="date"
+                    value="2026-10-19"
+                    aria-label="Дата выезда"
+                >
+            </div>
+
+
+            <div class="search-field">
+                <label class="search-label">
+                    Гости
+                </label>
+
+                <select aria-label="Количество гостей">
+                    <option>1 гость</option>
+                    <option selected>2 гостя</option>
+                    <option>3 гостя</option>
+                    <option>4 гостя</option>
+                    <option>5 гостей</option>
+                </select>
+            </div>
+
+
+            <button type="submit" class="search-button">
+                Найти
+            </button>
+
+        </form>
+
+    </div>
+</section>
+
+
+<main class="page">
+
+    <section class="results-heading">
+        <h2>Отели в Санкт-Петербурге</h2>
+        <p>Найдено 426 вариантов размещения</p>
+    </section>
+
+
+    <div class="content-layout">
+
+        <!-- FILTERS -->
+
+        <aside class="filters">
+
+            <div class="filter-header">
+                <h3>Фильтры</h3>
+
+                <button class="reset-button">
+                    Сбросить
+                </button>
+            </div>
+
+
+            <div class="filter-group">
+
+                <div class="filter-title">
+                    Стоимость за ночь
+                </div>
+
+                <div class="price-inputs">
+                    <input
+                        type="number"
+                        placeholder="от 2 000"
+                        aria-label="Цена от"
+                    >
+
+                    <input
+                        type="number"
+                        placeholder="до 25 000"
+                        aria-label="Цена до"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <div class="filter-title">
+                    Категория отеля
+                </div>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    <span class="stars">★★★★★</span>
+                    <span class="count">38</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    <span class="stars">★★★★</span>
+                    <span class="count">114</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    <span class="stars">★★★</span>
+                    <span class="count">178</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    <span class="stars">★★</span>
+                    <span class="count">54</span>
+                </label>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <div class="filter-title">
+                    Рейтинг гостей
+                </div>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    9+ Превосходно
+                    <span class="count">74</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    8+ Очень хорошо
+                    <span class="count">193</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    7+ Хорошо
+                    <span class="count">291</span>
+                </label>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <div class="filter-title">
+                    Тип размещения
+                </div>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    Отели
+                    <span class="count">182</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    Апартаменты
+                    <span class="count">143</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    Мини-отели
+                    <span class="count">62</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    Хостелы
+                    <span class="count">39</span>
+                </label>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <div class="filter-title">
+                    Условия проживания
+                </div>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    Завтрак включён
+                    <span class="count">203</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox">
+                    Бесплатная отмена
+                    <span class="count">271</span>
+                </label>
+
+            </div>
+
+        </aside>
+
+
+        <!-- RESULTS -->
+
+        <section class="results-area">
+
+            <div class="toolbar">
+
+                <div class="toolbar-top">
+
+                    <span class="toolbar-text">
+                        Показаны лучшие варианты
+                    </span>
+
+                    <button class="mobile-filter-button">
+                        Фильтры
+                    </button>
+
+                </div>
+
+
+                <div class="sort-block">
+
+                    <label for="sort">
+                        Сортировка:
+                    </label>
+
+                    <select id="sort">
+                        <option>По популярности</option>
+                        <option>Сначала дешевле</option>
+                        <option>Сначала дороже</option>
+                        <option>По рейтингу</option>
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="hotel-list">
+
+                <!-- HOTEL 1 -->
+
+                <article class="hotel-card">
+
+                    <img
+                        class="hotel-image"
+                        src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=700&q=80"
+                        alt="Отель Grand Palace"
+                    >
+
+                    <div class="hotel-info">
+
+                        <div class="hotel-title-row">
+                            <h3 class="hotel-title">
+                                Grand Palace Hotel
+                            </h3>
+
+                            <span class="stars">
+                                ★★★★★
+                            </span>
+                        </div>
+
+                        <div class="hotel-location">
+                            Невский проспект · 0,8 км от центра
+                        </div>
+
+                        <p class="hotel-description">
+                            Элегантный пятизвёздочный отель в историческом
+                            центре города. Просторные номера, SPA-комплекс
+                            и панорамный ресторан.
+                        </p>
+
+                        <div class="amenities">
+                            <span class="amenity good">
+                                ✓ Завтрак включён
+                            </span>
+
+                            <span class="amenity good">
+                                ✓ Бесплатная отмена
+                            </span>
+
+                            <span class="amenity">
+                                SPA
+                            </span>
+
+                            <span class="amenity">
+                                Wi-Fi
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="hotel-booking">
+
+                        <div class="rating">
+
+                            <div class="rating-text">
+                                <strong>Превосходно</strong>
+                                <span>1 824 отзыва</span>
+                            </div>
+
+                            <div class="rating-value">
+                                9,4
+                            </div>
+
+                        </div>
+
+
+                        <div class="price-block">
+
+                            <div class="price-label">
+                                3 ночи, 2 гостя
+                            </div>
+
+                            <div class="price">
+                                38 700 ₽
+                            </div>
+
+                            <div class="price-period">
+                                12 900 ₽ за ночь
+                            </div>
+
+                            <button class="choose-button">
+                                Выбрать номер
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- HOTEL 2 -->
+
+                <article class="hotel-card">
+
+                    <img
+                        class="hotel-image"
+                        src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=700&q=80"
+                        alt="Отель Nevsky Residence"
+                    >
+
+                    <div class="hotel-info">
+
+                        <div class="hotel-title-row">
+                            <h3 class="hotel-title">
+                                Nevsky Residence
+                            </h3>
+
+                            <span class="stars">
+                                ★★★★
+                            </span>
+                        </div>
+
+                        <div class="hotel-location">
+                            Центральный район · 1,1 км от центра
+                        </div>
+
+                        <p class="hotel-description">
+                            Современный городской отель рядом с главными
+                            достопримечательностями. Тихие номера,
+                            ресторан и круглосуточная стойка регистрации.
+                        </p>
+
+                        <div class="amenities">
+                            <span class="amenity good">
+                                ✓ Бесплатная отмена
+                            </span>
+
+                            <span class="amenity">
+                                Ресторан
+                            </span>
+
+                            <span class="amenity">
+                                Wi-Fi
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="hotel-booking">
+
+                        <div class="rating">
+
+                            <div class="rating-text">
+                                <strong>Очень хорошо</strong>
+                                <span>2 316 отзывов</span>
+                            </div>
+
+                            <div class="rating-value">
+                                8,9
+                            </div>
+
+                        </div>
+
+
+                        <div class="price-block">
+
+                            <div class="limited">
+                                Осталось 2 номера
+                            </div>
+
+                            <div class="price-label">
+                                3 ночи, 2 гостя
+                            </div>
+
+                            <div class="price">
+                                25 500 ₽
+                            </div>
+
+                            <div class="price-period">
+                                8 500 ₽ за ночь
+                            </div>
+
+                            <button class="choose-button">
+                                Выбрать номер
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- HOTEL 3 -->
+
+                <article class="hotel-card">
+
+                    <img
+                        class="hotel-image"
+                        src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=700&q=80"
+                        alt="Отель Aurora"
+                    >
+
+                    <div class="hotel-info">
+
+                        <div class="hotel-title-row">
+                            <h3 class="hotel-title">
+                                Aurora Boutique Hotel
+                            </h3>
+
+                            <span class="stars">
+                                ★★★★
+                            </span>
+                        </div>
+
+                        <div class="hotel-location">
+                            Петроградский район · 2,6 км от центра
+                        </div>
+
+                        <p class="hotel-description">
+                            Бутик-отель с современным интерьером,
+                            просторными номерами и видом на исторические
+                            улицы Санкт-Петербурга.
+                        </p>
+
+                        <div class="amenities">
+                            <span class="amenity good">
+                                ✓ Завтрак включён
+                            </span>
+
+                            <span class="amenity">
+                                Кондиционер
+                            </span>
+
+                            <span class="amenity">
+                                Wi-Fi
+                            </span>
+
+                            <span class="amenity">
+                                Парковка
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="hotel-booking">
+
+                        <div class="rating">
+
+                            <div class="rating-text">
+                                <strong>Превосходно</strong>
+                                <span>986 отзывов</span>
+                            </div>
+
+                            <div class="rating-value">
+                                9,1
+                            </div>
+
+                        </div>
+
+
+                        <div class="price-block">
+
+                            <div class="price-label">
+                                3 ночи, 2 гостя
+                            </div>
+
+                            <div class="price">
+                                22 800 ₽
+                            </div>
+
+                            <div class="price-period">
+                                7 600 ₽ за ночь
+                            </div>
+
+                            <button class="choose-button">
+                                Выбрать номер
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- HOTEL 4 -->
+
+                <article class="hotel-card">
+
+                    <img
+                        class="hotel-image"
+                        src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=700&q=80"
+                        alt="Отель Baltic Plaza"
+                    >
+
+                    <div class="hotel-info">
+
+                        <div class="hotel-title-row">
+                            <h3 class="hotel-title">
+                                Baltic Plaza
+                            </h3>
+
+                            <span class="stars">
+                                ★★★
+                            </span>
+                        </div>
+
+                        <div class="hotel-location">
+                            Василеостровский район · 3,4 км от центра
+                        </div>
+
+                        <p class="hotel-description">
+                            Уютный отель для деловых и туристических
+                            поездок. Удобное расположение рядом с метро
+                            и набережной Невы.
+                        </p>
+
+                        <div class="amenities">
+                            <span class="amenity good">
+                                ✓ Бесплатная отмена
+                            </span>
+
+                            <span class="amenity">
+                                Wi-Fi
+                            </span>
+
+                            <span class="amenity">
+                                Семейные номера
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="hotel-booking">
+
+                        <div class="rating">
+
+                            <div class="rating-text">
+                                <strong>Очень хорошо</strong>
+                                <span>1 537 отзывов</span>
+                            </div>
+
+                            <div class="rating-value">
+                                8,5
+                            </div>
+
+                        </div>
+
+
+                        <div class="price-block">
+
+                            <div class="price-label">
+                                3 ночи, 2 гостя
+                            </div>
+
+                            <div class="price">
+                                16 200 ₽
+                            </div>
+
+                            <div class="price-period">
+                                5 400 ₽ за ночь
+                            </div>
+
+                            <button class="choose-button">
+                                Выбрать номер
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- HOTEL 5 -->
+
+                <article class="hotel-card">
+
+                    <img
+                        class="hotel-image"
+                        src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=700&q=80"
+                        alt="Отель Riverside"
+                    >
+
+                    <div class="hotel-info">
+
+                        <div class="hotel-title-row">
+                            <h3 class="hotel-title">
+                                Riverside Hotel
+                            </h3>
+
+                            <span class="stars">
+                                ★★★★
+                            </span>
+                        </div>
+
+                        <div class="hotel-location">
+                            Адмиралтейский район · 1,7 км от центра
+                        </div>
+
+                        <p class="hotel-description">
+                            Отель на набережной с видом на воду,
+                            рестораном европейской кухни и удобным
+                            доступом к историческому центру.
+                        </p>
+
+                        <div class="amenities">
+                            <span class="amenity good">
+                                ✓ Завтрак включён
+                            </span>
+
+                            <span class="amenity good">
+                                ✓ Бесплатная отмена
+                            </span>
+
+                            <span class="amenity">
+                                Вид на реку
+                            </span>
+
+                            <span class="amenity">
+                                Wi-Fi
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="hotel-booking">
+
+                        <div class="rating">
+
+                            <div class="rating-text">
+                                <strong>Очень хорошо</strong>
+                                <span>1 128 отзывов</span>
+                            </div>
+
+                            <div class="rating-value">
+                                8,8
+                            </div>
+
+                        </div>
+
+
+                        <div class="price-block">
+
+                            <div class="price-label">
+                                3 ночи, 2 гостя
+                            </div>
+
+                            <div class="price">
+                                29 400 ₽
+                            </div>
+
+                            <div class="price-period">
+                                9 800 ₽ за ночь
+                            </div>
+
+                            <button class="choose-button">
+                                Выбрать номер
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- HOTEL 6 -->
+
+                <article class="hotel-card">
+
+                    <img
+                        class="hotel-image"
+                        src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=700&q=80"
+                        alt="Отель City Loft"
+                    >
+
+                    <div class="hotel-info">
+
+                        <div class="hotel-title-row">
+                            <h3 class="hotel-title">
+                                City Loft Hotel
+                            </h3>
+
+                            <span class="stars">
+                                ★★★
+                            </span>
+                        </div>
+
+                        <div class="hotel-location">
+                            Лиговский проспект · 2,2 км от центра
+                        </div>
+
+                        <p class="hotel-description">
+                            Современный городской отель в стиле loft.
+                            Подходит для коротких поездок и предлагает
+                            удобные номера по доступной цене.
+                        </p>
+
+                        <div class="amenities">
+                            <span class="amenity good">
+                                ✓ Бесплатная отмена
+                            </span>
+
+                            <span class="amenity">
+                                Wi-Fi
+                            </span>
+
+                            <span class="amenity">
+                                Кофейня
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="hotel-booking">
+
+                        <div class="rating">
+
+                            <div class="rating-text">
+                                <strong>Хорошо</strong>
+                                <span>842 отзыва</span>
+                            </div>
+
+                            <div class="rating-value">
+                                8,2
+                            </div>
+
+                        </div>
+
+
+                        <div class="price-block">
+
+                            <div class="price-label">
+                                3 ночи, 2 гостя
+                            </div>
+
+                            <div class="price">
+                                12 900 ₽
+                            </div>
+
+                            <div class="price-period">
+                                4 300 ₽ за ночь
+                            </div>
+
+                            <button class="choose-button">
+                                Выбрать номер
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    <div class="footer-inner">
+
+        <div>
+            <div class="logo">
+                Stay<span>Finder</span>
+            </div>
+
+            <div>
+                © 2026 StayFinder
+            </div>
+        </div>
+
+        <div>
+            Поиск и бронирование отелей
+        </div>
+
+    </div>
+
+</footer>
+
+</body>
+</html>
